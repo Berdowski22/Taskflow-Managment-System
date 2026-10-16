@@ -1,1 +1,32 @@
-[]
+[
+    {
+        "id": 1,
+        "title": "TaskFlow API’sini ayağa kaldır",
+        "description": "Express ile temel routing ve controller yapılarını hazırla.",
+        "status": "in-progress",
+        "priority": "high",
+        "assignee": "Musa",
+        "createdAt": "2026-10-16T18:22:22.418Z",
+        "updatedAt": "2026-10-16T18:22:22.418Z"
+    },
+    {
+        "id": 2,
+        "title": "Validation middleware’lerini yaz",
+        "description": "Task oluşturma ve güncelleme için schema tabanlı doğrulama yap.",
+        "status": "pending",
+        "priority": "high",
+        "assignee": null,
+        "createdAt": "2026-10-16T18:22:43.827Z",
+        "updatedAt": "2026-10-16T18:22:43.827Z"
+    },
+    {
+        "id": 3,
+        "title": "Logger middleware’ini ekle",
+        "description": "Her isteği konsola ve logs/requests.log dosyasına yaz.",
+        "status": "pending",
+        "priority": "medium",
+        "assignee": null,
+        "createdAt": "2026-10-16T18:22:55.101Z",
+        "updatedAt": "2026-10-16T18:22:55.101Z"
+    }
+]
