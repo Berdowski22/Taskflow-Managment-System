@@ -135,6 +135,7 @@ Her istek şu formatta konsola ve `logs/requests.log` dosyasına yazılır:
 
 - [Proje Tanıtım Dokümanı](./docs/proje-tanitim.md)
 - [API Tasarım Dokümanı](./docs/api-tasarim.md)
+- [Postman Test Ekran Görüntüleri](./docs/screenshots/README.md)
 
 ## Teknolojiler
 
