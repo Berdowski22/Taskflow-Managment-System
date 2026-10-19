@@ -1,13 +1,13 @@
 [
     {
         "id": 1,
-        "title": "TaskFlow API’sini ayağa kaldır",
-        "description": "Express ile temel routing ve controller yapılarını hazırla.",
+        "title": "API Dokümantasyonunu tamamla",
+        "description": "Postman test ekran görüntüleri docs klasörüne eklendi.",
         "status": "in-progress",
         "priority": "high",
         "assignee": "Musa",
         "createdAt": "2026-10-16T18:22:22.418Z",
-        "updatedAt": "2026-10-16T18:22:22.418Z"
+        "updatedAt": "2026-10-19T18:29:06.125Z"
     },
     {
         "id": 2,
@@ -28,5 +28,15 @@
         "assignee": null,
         "createdAt": "2026-10-16T18:22:55.101Z",
         "updatedAt": "2026-10-16T18:22:55.101Z"
+    },
+    {
+        "id": 4,
+        "title": "Postman ile testleri tamamla",
+        "description": "CRUD ekran görüntülerini alıp docs klasörüne ekle.",
+        "status": "pending",
+        "priority": "high",
+        "assignee": "Berdan",
+        "createdAt": "2026-10-19T18:19:16.552Z",
+        "updatedAt": "2026-10-19T18:19:16.552Z"
     }
 ]
