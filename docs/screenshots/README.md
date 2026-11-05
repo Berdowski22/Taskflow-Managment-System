@@ -17,6 +17,7 @@ Bu doküman, TaskFlow REST API'sinin Postman üzerinde gerçekleştirilen CRUD v
 | 7 | Görev Silme (Adım 1) | `DELETE` | `/tasks/:id` | `200 OK` | `7-delete-task1.png` |
 | 8 | Görev Silme (Adım 2 / Tekrar Silme) | `DELETE` | `/tasks/:id` | `200 OK / 404` | `7-delete-task2.png` |
 | 9 | Silme Sonrası Liste Kontrolü | `GET` | `/tasks` | `200 OK` | `8-after-delete-task-get-all-user.png` |
+| 10 | Durum ve Önceliğe Göre Filtreleme | `GET` | `/tasks?status=pending&priority=high` | `200 OK` | `9-filter-by-the-status-and-priorty.png` |
 
 ---
 
@@ -68,3 +69,9 @@ Silme işleminin detay/tekrar kontrolü:
 ## 8. Silme Sonrası Liste Kontrolü (`GET /tasks`)
 Silinen görevin listeden kaldırıldığının doğrulanması:
 ![Silme Sonrası Liste](./8-after-delete-task-get-all-user.png)
+
+---
+
+## 9. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=pending&priority=high`)
+`status=pending` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
+![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty.png)
