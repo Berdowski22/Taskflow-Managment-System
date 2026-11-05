@@ -7,7 +7,7 @@ Bu doküman, TaskFlow REST API'sinin Postman üzerinde gerçekleştirilen CRUD v
 ## Test Senaryoları Özeti
 
 | # | Senaryo | HTTP Method | Endpoint | Beklenen Durum | Dosya Adı |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 1 | Tüm Görevleri Listeleme | `GET` | `/tasks` | `200 OK` | `1-get-all-tasks.png` |
 | 2 | Yeni Görev Ekleme | `POST` | `/tasks` | `201 Created` | `2-Create-tasks.png` |
 | 3 | Ekleme Sonrası Liste Kontrolü | `GET` | `/tasks` | `200 OK` | `3-after-create-task-get-all-user.png` |
@@ -51,18 +51,21 @@ Yeni eklenen görevin listede yer aldığının doğrulanması:
 ---
 
 ## 5. ID ile Görev Detayı Getirme (`GET /tasks/:id`)
+
 Belirli bir görevin detayının görüntülenmesi:
 ![Görev Detayı](./5-get-task-by-id.png)
 
 ---
 
 ## 6. Görev Güncelleme (`PATCH /tasks/:id`)
+
 Görevin alanlarının güncellenmesi:
 ![Görev Güncelleme](./6-update-task.png)
 
 ---
 
 ## 7. Görev Silme (`DELETE /tasks/:id`)
+
 Görevin başarıyla silinmesi:
 ![Görev Silme 1](./7-delete-task1.png)
 
@@ -72,17 +75,20 @@ Silme işleminin detay/tekrar kontrolü:
 ---
 
 ## 8. Silme Sonrası Liste Kontrolü (`GET /tasks`)
+
 Silinen görevin listeden kaldırıldığının doğrulanması:
 ![Silme Sonrası Liste](./8-after-delete-task-get-all-user.png)
 
 ---
 
 ## 9. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=pending&priority=high`)
+
 `status=pending` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
 ![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty-v1.png)
 
 ---
 
 ## 10. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=in-progress&priority=high`)
+
 `status=in-progress` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
 ![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty-v2.png)

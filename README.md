@@ -84,7 +84,7 @@ Tarayıcıda `http://localhost:3000` adresine gidildiğinde şu yanıt görülme
 ## Endpoint'ler
 
 | Method | Endpoint | Açıklama | Başarılı | Hata |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `GET` | `/` | Sağlık kontrolü | `200` | – |
 | `POST` | `/tasks` | Yeni görev ekler | `201` | `400` |
 | `GET` | `/tasks` | Görevleri listeler ve filtreler | `200` | `400` |
@@ -97,7 +97,7 @@ Tarayıcıda `http://localhost:3000` adresine gidildiğinde şu yanıt görülme
 `GET /tasks` isteğinde aşağıdaki query parametreleri birlikte kullanılabilir. Birden fazla filtre gönderildiğinde tüm koşulları sağlayan görevler döner. `keyword`, başlık ve açıklama içinde büyük/küçük harf duyarsız arama yapar; `assignee` eşleşmesi de büyük/küçük harf duyarsızdır.
 
 | Parametre | Açıklama | Örnek |
-|---|---|---|
+| --- | --- | --- |
 | `status` | Görev durumu: `pending`, `in-progress`, `completed` | `?status=in-progress` |
 | `priority` | Öncelik: `low`, `medium`, `high` | `?priority=high` |
 | `assignee` | Atanan kişinin adı | `?assignee=musa` |

@@ -7,7 +7,7 @@ Bu doküman, TaskFlow Görev Yönetim API'sinin veri modelini, endpoint listesin
 Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 
 | Katman | Klasör | Sorumluluk |
-|---|---|---|
+| --- | --- | --- |
 | Routes | `src/routes/` | URL ve HTTP method'larını controller fonksiyonlarına bağlar |
 | Controllers | `src/controllers/` | İsteği karşılar, iş mantığını yürütür ve HTTP yanıtı döner |
 | Models | `src/models/` | Görev alanları, izinli değerler ve doğrulama |
@@ -20,7 +20,7 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 ## 2. Veri Modeli – Task
 
 | Alan | Tip | Zorunlu | Varsayılan | Açıklama |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `id` | number | otomatik | artan sayı | Benzersiz görev kimliği |
 | `title` | string | **evet** | – | Görev başlığı |
 | `description` | string | hayır | `""` | Görev açıklaması |
@@ -50,7 +50,7 @@ Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoks
 ## 3. Endpoint Listesi
 
 | # | Method | Endpoint | Açıklama | Başarılı | Hata |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 1 | `POST` | `/tasks` | Yeni görev ekler | `201` | `400` |
 | 2 | `GET` | `/tasks` | Tüm görevleri listeler | `200` | – |
 | 3 | `GET` | `/tasks/:id` | Görev detayını getirir | `200` | `404` |
@@ -63,7 +63,7 @@ Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoks
 `GET /tasks` endpoint'i aşağıdaki query parametrelerini destekler. Birden fazla parametre birlikte kullanıldığında koşullar AND mantığıyla uygulanır:
 
 | Parametre | Geçerli değer / davranış |
-|---|---|
+| --- | --- |
 | `status` | `pending`, `in-progress` veya `completed` |
 | `priority` | `low`, `medium` veya `high` |
 | `assignee` | Atanan kişi adıyla tam eşleşme (büyük/küçük harf duyarsız) |
@@ -92,7 +92,7 @@ Filtre uygulanmadığında tüm görevler listelenir. Yanıttaki `count`, filtre
 ## 5. HTTP Durum Kodları
 
 | Kod | Anlamı | Ne zaman |
-|---|---|---|
+| --- | --- | --- |
 | `200` | OK | Başarılı okuma, güncelleme, silme |
 | `201` | Created | Görev oluşturuldu |
 | `400` | Bad Request | `title` eksik veya geçersiz değer |
