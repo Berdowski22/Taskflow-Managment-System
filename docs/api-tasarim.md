@@ -12,9 +12,10 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 | Controllers | `src/controllers/` | İsteği karşılar, iş mantığını yürütür ve HTTP yanıtı döner |
 | Models | `src/models/` | Görev alanları, izinli değerler ve doğrulama |
 | Middlewares | `src/middlewares/` | Logger, 404 ve merkezi hata yakalama |
-| Data | `src/data/tasks.json` | Görevlerin JSON olarak saklandığı veri dosyası |
+| Repository | `src/repositories/` | Parametreli PostgreSQL sorgularıyla görev verisine erişim |
+| Database | `src/database/` | PostgreSQL bağlantısı ve `tasks` tablosunun başlangıç şeması |
 
-**İstek akışı:** `İstemci → logger → routes → controller → tasks.json`
+**İstek akışı:** `İstemci → logger → routes → controller → repository → PostgreSQL`
 
 ## 2. Veri Modeli – Task
 
@@ -28,6 +29,8 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 | `assignee` | string \| null | hayır | `null` | Görevin atandığı çalışan |
 | `createdAt` | ISO tarih | otomatik | oluşturma anı | Oluşturulma zamanı |
 | `updatedAt` | ISO tarih | otomatik | oluşturma anı | Son güncelleme zamanı |
+
+Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoksa oluşturulur. Bağlantı `DATABASE_URL` ortam değişkeninden alınır; görevler JSON dosyasından okunmaz veya içe aktarılmaz.
 
 **Örnek:**
 

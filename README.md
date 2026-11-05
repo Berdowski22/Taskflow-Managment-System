@@ -12,11 +12,12 @@ Node.js ve Express.js ile geliştirilmiş, bir yazılım ekibindeki görevlerin 
 - Durum, öncelik, atanan kişi ve başlık/açıklama metnine göre görev filtreleme
 - Her isteği konsola ve `logs/requests.log` dosyasına yazan **Logger middleware**
 - Merkezi hata yönetimi ve 404 middleware
-- JSON dosyası ile veri saklama (`src/data/tasks.json`)
+- PostgreSQL veritabanında görev saklama
 
 ## Gereksinimler
 
 - [Node.js](https://nodejs.org/) v18 veya üzeri
+- PostgreSQL
 - npm (Node.js ile birlikte gelir)
 - Test için [Postman](https://www.postman.com/) (isteğe bağlı)
 
@@ -31,7 +32,19 @@ cd Taskflow-Managment-System
 
 # 3. Bağımlılıkları yükleyin
 npm install
+
+# 4. Örnek ortam dosyasını kopyalayın
+cp .env.example .env
 ```
+
+`.env` dosyasındaki `DATABASE_URL` değerini PostgreSQL kullanıcı bilgilerinizle güncelleyin. Örnek:
+
+```env
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/taskflow
+PORT=3000
+```
+
+Bağlantıdaki `taskflow` veritabanı PostgreSQL'de önceden oluşturulmuş olmalıdır. Sunucu başladığında `tasks` tablosu yoksa otomatik oluşturulur. `src/data/tasks.json` veritabanına aktarılmaz ve uygulama tarafından kullanılmaz; API ilk açılışta boş görev tablosuyla başlar.
 
 ## Çalıştırma
 
@@ -55,14 +68,16 @@ Tarayıcıda `http://localhost:3000` adresine gidildiğinde şu yanıt görülme
 
 ```
 ├── src/
-│   ├── controllers/   # İsteği karşılar, CRUD ve JSON işlemlerini yönetir
+│   ├── controllers/   # İsteği karşılar ve HTTP yanıtlarını yönetir
+│   ├── database/      # PostgreSQL bağlantısı ve başlangıç şeması
 │   ├── models/        # Görev alanları, izinli değerler, doğrulama
+│   ├── repositories/  # PostgreSQL görev sorguları
 │   ├── routes/        # URL → controller eşlemesi
 │   ├── middlewares/   # logger, notFound, errorHandler
-│   ├── data/          # tasks.json (veri dosyası)
 │   ├── app.js         # Express uygulaması
 │   └── server.js      # Sunucuyu başlatır
 ├── logs/              # requests.log (çalışınca otomatik oluşur)
+├── .env.example       # PostgreSQL bağlantı ayarı örneği
 └── package.json
 ```
 
@@ -157,4 +172,5 @@ Her istek şu formatta konsola ve `logs/requests.log` dosyasına yazılır:
 
 - Node.js
 - Express.js 5
+- PostgreSQL
 - Postman (test)

@@ -1,8 +1,5 @@
 // Görev Yönetim Controller'ı (CRUD Operasyonları)
-// Tüm istekler doğrudan bu controller üzerinden tasks.json dosyası ile çalışır.
-
-const fs = require('fs/promises');
-const path = require('path');
+const taskRepository = require('../repositories/task.repository');
 const {
   DEFAULTS,
   ALLOWED_FIELDS,
@@ -10,24 +7,6 @@ const {
   PRIORITIES,
   validateTask,
 } = require('../models/task.model');
-
-const DATA_FILE = path.join(__dirname, '..', 'data', 'tasks.json');
-
-// Yardımcı Fonksiyon: tasks.json dosyasını oku
-const readTasks = async () => {
-  try {
-    const content = await fs.readFile(DATA_FILE, 'utf-8');
-    return content.trim() ? JSON.parse(content) : [];
-  } catch (err) {
-    if (err.code === 'ENOENT') return [];
-    throw err;
-  }
-};
-
-// Yardımcı Fonksiyon: tasks.json dosyasına yaz
-const writeTasks = async (tasks) => {
-  await fs.writeFile(DATA_FILE, JSON.stringify(tasks, null, 4), 'utf-8');
-};
 
 // Yardımcı Fonksiyon: Sadece izinli alanları filtrele
 const pickAllowedFields = (data) => {
@@ -72,24 +51,11 @@ const getAllTasks = async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid filters', errors });
   }
 
-  const tasks = await readTasks();
-  const keyword = filters.keyword?.trim().toLowerCase();
-  const assignee = filters.assignee?.trim().toLowerCase();
-  const filteredTasks = tasks.filter((task) => {
-    if (filters.status && task.status !== filters.status) return false;
-    if (filters.priority && task.priority !== filters.priority) return false;
-
-    if (assignee && (task.assignee || '').toLowerCase() !== assignee) {
-      return false;
-    }
-
-    if (keyword) {
-      const title = (task.title || '').toLowerCase();
-      const description = (task.description || '').toLowerCase();
-      if (!title.includes(keyword) && !description.includes(keyword)) return false;
-    }
-
-    return true;
+  const filteredTasks = await taskRepository.findAll({
+    status: filters.status,
+    priority: filters.priority,
+    assignee: filters.assignee?.trim(),
+    keyword: filters.keyword?.trim(),
   });
 
   res.status(200).json({
@@ -106,8 +72,7 @@ const getTaskById = async (req, res) => {
     return res.status(404).json({ success: false, message: `Task with id ${req.params.id} not found` });
   }
 
-  const tasks = await readTasks();
-  const task = tasks.find((t) => t.id === id);
+  const task = await taskRepository.findById(id);
 
   if (!task) {
     return res.status(404).json({ success: false, message: `Task with id ${id} not found` });
@@ -123,22 +88,11 @@ const createTask = async (req, res) => {
     return res.status(400).json({ success: false, message: 'Validation failed', errors });
   }
 
-  const tasks = await readTasks();
-  const now = new Date().toISOString();
-  const nextId = tasks.length ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
   const fields = pickAllowedFields(req.body);
-
-  const newTask = {
-    id: nextId,
-    title: fields.title,
+  const newTask = await taskRepository.create({
     ...DEFAULTS,
     ...fields,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  tasks.push(newTask);
-  await writeTasks(tasks);
+  });
 
   res.status(201).json({ success: true, data: newTask });
 };
@@ -155,22 +109,11 @@ const updateTask = async (req, res) => {
     return res.status(400).json({ success: false, message: 'Validation failed', errors });
   }
 
-  const tasks = await readTasks();
-  const index = tasks.findIndex((t) => t.id === id);
-
-  if (index === -1) {
+  const updatedTask = await taskRepository.update(id, pickAllowedFields(req.body));
+  if (!updatedTask) {
     return res.status(404).json({ success: false, message: `Task with id ${id} not found` });
   }
-
-  tasks[index] = {
-    ...tasks[index],
-    ...pickAllowedFields(req.body),
-    updatedAt: new Date().toISOString(),
-  };
-
-  await writeTasks(tasks);
-
-  res.status(200).json({ success: true, data: tasks[index] });
+  res.status(200).json({ success: true, data: updatedTask });
 };
 
 // 5. DELETE /tasks/:id - Görev sil
@@ -180,15 +123,10 @@ const deleteTask = async (req, res) => {
     return res.status(404).json({ success: false, message: `Task with id ${req.params.id} not found` });
   }
 
-  const tasks = await readTasks();
-  const index = tasks.findIndex((t) => t.id === id);
-
-  if (index === -1) {
+  const deletedTask = await taskRepository.remove(id);
+  if (!deletedTask) {
     return res.status(404).json({ success: false, message: `Task with id ${id} not found` });
   }
-
-  const [deletedTask] = tasks.splice(index, 1);
-  await writeTasks(tasks);
 
   res.status(200).json({
     success: true,

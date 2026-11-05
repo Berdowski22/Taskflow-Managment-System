@@ -17,29 +17,34 @@ Bu doküman, TaskFlow REST API'sinin Postman üzerinde gerçekleştirilen CRUD v
 | 7 | Görev Silme (Adım 1) | `DELETE` | `/tasks/:id` | `200 OK` | `7-delete-task1.png` |
 | 8 | Görev Silme (Adım 2 / Tekrar Silme) | `DELETE` | `/tasks/:id` | `200 OK / 404` | `7-delete-task2.png` |
 | 9 | Silme Sonrası Liste Kontrolü | `GET` | `/tasks` | `200 OK` | `8-after-delete-task-get-all-user.png` |
-| 10 | Durum ve Önceliğe Göre Filtreleme | `GET` | `/tasks?status=pending&priority=high` | `200 OK` | `9-filter-by-the-status-and-priorty.png` |
+| 10 | Durum ve Önceliğe Göre Filtreleme | `GET` | `/tasks?status=pending&priority=high` | `200 OK` | `9-filter-by-the-status-and-priorty-v1.png` |
+| 11 | Durum ve Önceliğe Göre Filtreleme | `GET` | `/tasks?status=pending&priority=high` | `200 OK` | `9-filter-by-the-status-and-priorty-v2.png` |
 
 ---
 
 ## 1. Tüm Görevleri Listeleme (`GET /tasks`)
+
 Mevcut görevlerin listelenmesi:
 ![Tüm Görevleri Listeleme](./1-get-all-tasks.png)
 
 ---
 
 ## 2. Yeni Görev Ekleme (`POST /tasks`)
+
 Başarılı yeni görev oluşturma:
 ![Yeni Görev Ekleme](./2-Create-tasks.png)
 
 ---
 
 ## 3. Görev Eklendikten Sonra Listeleme (`GET /tasks`)
+
 Yeni eklenen görevin listede yer aldığının doğrulanması:
 ![Ekleme Sonrası Liste](./3-after-create-task-get-all-user.png)
 
 ---
 
 ## 4. Eksik Body ile Görev Ekleme Hatası (`POST /tasks`)
+
 `title` alanı gönderilmediğinde dönen 400 Bad Request doğrulama hatası:
 ![Eksik Body Hatası](./4-create-task-without-body.png)
 

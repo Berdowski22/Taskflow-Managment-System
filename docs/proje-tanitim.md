@@ -19,12 +19,14 @@ destekler.
 
 | Başlık | Açıklama |
 |---|---|
-| Teknolojiler | Node.js, Express.js |
-| Mimari | Katmanlı yapı: routes → controllers → data |
-| Veri saklama | JSON dosyası (`src/data/tasks.json`) |
+| Teknolojiler | Node.js, Express.js, PostgreSQL |
+| Mimari | Katmanlı yapı: routes → controllers → repositories → PostgreSQL |
+| Veri saklama | PostgreSQL (`tasks` tablosu) |
 | Temel işlevler | Görev ekleme, listeleme, detay, güncelleme, silme (CRUD) |
 | Middleware | İstekleri konsola ve dosyaya kaydeden Logger |
 | Test | Postman |
+
+PostgreSQL bağlantısı `DATABASE_URL` ortam değişkeniyle yapılandırılır. Uygulama başlangıcında `tasks` tablosu yoksa oluşturulur; eski `src/data/tasks.json` verileri otomatik aktarılmaz.
 
 ## Endpoint Özeti
 
