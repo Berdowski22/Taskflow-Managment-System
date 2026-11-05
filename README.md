@@ -91,6 +91,15 @@ Tarayıcıda `http://localhost:3000` adresine gidildiğinde şu yanıt görülme
 | `GET` | `/tasks/:id` | Görev detayını getirir | `200` | `404` |
 | `PATCH` | `/tasks/:id` | Görevi günceller | `200` | `400`, `404` |
 | `DELETE` | `/tasks/:id` | Görevi siler | `200` | `404` |
+| `POST` | `/users` | Yeni kullanıcı ekler | `201` | `400`, `409` |
+| `GET` | `/users` | Kullanıcıları aktif görev sayısı ve görev listesiyle getirir | `200` | – |
+| `GET` | `/users/:id` | Kullanıcı detayını getirir | `200` | `404` |
+| `PUT` | `/users/:id` | Kullanıcıyı günceller (tüm alanlar zorunlu) | `200` | `400`, `404`, `409` |
+| `DELETE` | `/users/:id` | Kullanıcıyı siler (görevlerinin `assigneeId` değeri `null` olur) | `200` | `404` |
+
+### Kullanıcılar
+
+`POST /users` gövdesi: `{ "fullName": "Ali Veli", "email": "ali@example.com", "department": "IT" }`. E-posta benzersizdir; tekrarında `409 Conflict` döner. Yanıtlarda `activeTaskCount` ve `activeTasks` (durumu `pending` veya `in-progress` olan görevler) `tasks` tablosundan hesaplanır. `users` tablosu ve `tasks.assignee_id` kolonu veritabanında önceden oluşturulmuş olmalıdır.
 
 ### Görevleri Filtreleme
 

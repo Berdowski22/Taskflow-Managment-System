@@ -1,5 +1,6 @@
 const express = require('express');
 const taskRoutes = require('./routes/task.routes');
+const userRoutes = require('./routes/user.routes');
 const logger = require('./middlewares/logger');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/tasks', taskRoutes);
+app.use('/users', userRoutes);
 
 // 404 for undefined routes (must come after all routes)
 app.use(notFound);
