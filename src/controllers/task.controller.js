@@ -3,7 +3,13 @@
 
 const fs = require('fs/promises');
 const path = require('path');
-const { DEFAULTS, ALLOWED_FIELDS, validateTask } = require('../models/task.model');
+const {
+  DEFAULTS,
+  ALLOWED_FIELDS,
+  STATUSES,
+  PRIORITIES,
+  validateTask,
+} = require('../models/task.model');
 
 const DATA_FILE = path.join(__dirname, '..', 'data', 'tasks.json');
 
@@ -42,11 +48,54 @@ const parseId = (value) => {
 
 // 1. GET /tasks - Tüm görevleri listele
 const getAllTasks = async (req, res) => {
+  const filters = req.query;
+  const allowedFilters = ['status', 'priority', 'assignee', 'keyword'];
+  const errors = Object.keys(filters)
+    .filter((filter) => !allowedFilters.includes(filter))
+    .map((filter) => `Unsupported filter: ${filter}`);
+
+  for (const filter of allowedFilters) {
+    if (filters[filter] !== undefined && (typeof filters[filter] !== 'string' || !filters[filter].trim())) {
+      errors.push(`${filter} must be a non-empty string`);
+    }
+  }
+
+  if (filters.status && !STATUSES.includes(filters.status)) {
+    errors.push(`status must be one of: ${STATUSES.join(', ')}`);
+  }
+
+  if (filters.priority && !PRIORITIES.includes(filters.priority)) {
+    errors.push(`priority must be one of: ${PRIORITIES.join(', ')}`);
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: 'Invalid filters', errors });
+  }
+
   const tasks = await readTasks();
+  const keyword = filters.keyword?.trim().toLowerCase();
+  const assignee = filters.assignee?.trim().toLowerCase();
+  const filteredTasks = tasks.filter((task) => {
+    if (filters.status && task.status !== filters.status) return false;
+    if (filters.priority && task.priority !== filters.priority) return false;
+
+    if (assignee && (task.assignee || '').toLowerCase() !== assignee) {
+      return false;
+    }
+
+    if (keyword) {
+      const title = (task.title || '').toLowerCase();
+      const description = (task.description || '').toLowerCase();
+      if (!title.includes(keyword) && !description.includes(keyword)) return false;
+    }
+
+    return true;
+  });
+
   res.status(200).json({
     success: true,
-    count: tasks.length,
-    data: tasks,
+    count: filteredTasks.length,
+    data: filteredTasks,
   });
 };
 

@@ -55,6 +55,21 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 | 5 | `DELETE` | `/tasks/:id` | Görevi siler | `200` | `404` |
 | – | `GET` | `/` | Sağlık kontrolü | `200` | – |
 
+### Görev Listeleme Filtreleri
+
+`GET /tasks` endpoint'i aşağıdaki query parametrelerini destekler. Birden fazla parametre birlikte kullanıldığında koşullar AND mantığıyla uygulanır:
+
+| Parametre | Geçerli değer / davranış |
+|---|---|
+| `status` | `pending`, `in-progress` veya `completed` |
+| `priority` | `low`, `medium` veya `high` |
+| `assignee` | Atanan kişi adıyla tam eşleşme (büyük/küçük harf duyarsız) |
+| `keyword` | Başlık veya açıklama içinde kısmi arama (büyük/küçük harf duyarsız) |
+
+Örnek: `GET /tasks?status=in-progress&priority=high&keyword=backend`
+
+Filtre uygulanmadığında tüm görevler listelenir. Yanıttaki `count`, filtrelerden sonra kalan görev sayısıdır. Bilinmeyen filtreler, boş değerler veya geçersiz `status`/`priority` değerleri `400 Bad Request` ile reddedilir.
+
 ## 4. Yanıt Formatı
 
 ```json
@@ -78,6 +93,7 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 | `200` | OK | Başarılı okuma, güncelleme, silme |
 | `201` | Created | Görev oluşturuldu |
 | `400` | Bad Request | `title` eksik veya geçersiz değer |
+| `400` | Bad Request | Listeleme filtresi geçersiz |
 | `404` | Not Found | Görev ya da route bulunamadı |
 | `500` | Internal Server Error | Beklenmeyen sunucu hatası |
 

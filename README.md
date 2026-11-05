@@ -9,6 +9,7 @@ Node.js ve Express.js ile geliştirilmiş, bir yazılım ekibindeki görevlerin 
 - Görev ekleme, listeleme, detay, güncelleme ve silme (CRUD)
 - Görev durumu (`pending`, `in-progress`, `completed`) ve öncelik (`low`, `medium`, `high`) yönetimi
 - Görevlerin çalışanlara atanması (`assignee`)
+- Durum, öncelik, atanan kişi ve başlık/açıklama metnine göre görev filtreleme
 - Her isteği konsola ve `logs/requests.log` dosyasına yazan **Logger middleware**
 - Merkezi hata yönetimi ve 404 middleware
 - JSON dosyası ile veri saklama (`src/data/tasks.json`)
@@ -71,10 +72,25 @@ Tarayıcıda `http://localhost:3000` adresine gidildiğinde şu yanıt görülme
 |---|---|---|---|---|
 | `GET` | `/` | Sağlık kontrolü | `200` | – |
 | `POST` | `/tasks` | Yeni görev ekler | `201` | `400` |
-| `GET` | `/tasks` | Tüm görevleri listeler | `200` | – |
+| `GET` | `/tasks` | Görevleri listeler ve filtreler | `200` | `400` |
 | `GET` | `/tasks/:id` | Görev detayını getirir | `200` | `404` |
 | `PATCH` | `/tasks/:id` | Görevi günceller | `200` | `400`, `404` |
 | `DELETE` | `/tasks/:id` | Görevi siler | `200` | `404` |
+
+### Görevleri Filtreleme
+
+`GET /tasks` isteğinde aşağıdaki query parametreleri birlikte kullanılabilir. Birden fazla filtre gönderildiğinde tüm koşulları sağlayan görevler döner. `keyword`, başlık ve açıklama içinde büyük/küçük harf duyarsız arama yapar; `assignee` eşleşmesi de büyük/küçük harf duyarsızdır.
+
+| Parametre | Açıklama | Örnek |
+|---|---|---|
+| `status` | Görev durumu: `pending`, `in-progress`, `completed` | `?status=in-progress` |
+| `priority` | Öncelik: `low`, `medium`, `high` | `?priority=high` |
+| `assignee` | Atanan kişinin adı | `?assignee=musa` |
+| `keyword` | Başlık veya açıklamada aranacak metin | `?keyword=backend` |
+
+Örnek: `GET /tasks?status=pending&priority=high&assignee=musa`
+
+Filtrelenmiş yanıttaki `count`, eşleşen görev sayısını gösterir. Geçersiz veya bilinmeyen filtreler `400 Bad Request` ve açıklayıcı bir hata listesi döndürür.
 
 ### Örnek İstekler
 
