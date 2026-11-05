@@ -74,4 +74,10 @@ Silinen görevin listeden kaldırıldığının doğrulanması:
 
 ## 9. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=pending&priority=high`)
 `status=pending` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
-![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty.png)
+![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty-v1.png)
+
+---
+
+## 10. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=in-progress&priority=high`)
+`status=in-progress` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
+![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty-v2.png)
