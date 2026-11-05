@@ -4,6 +4,15 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json({ success: false, message: 'Invalid JSON body' });
   }
 
+  // PostgreSQL foreign key ihlali: atanan kullanıcı users tablosunda yok
+  if (err.code === '23503') {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: ['assigneeId must refer to an existing user'],
+    });
+  }
+
   console.error(err);
   res.status(err.status || 500).json({
     success: false,

@@ -8,7 +8,7 @@ Node.js ve Express.js ile geliştirilmiş, bir yazılım ekibindeki görevlerin 
 
 - Görev ekleme, listeleme, detay, güncelleme ve silme (CRUD)
 - Görev durumu (`pending`, `in-progress`, `completed`) ve öncelik (`low`, `medium`, `high`) yönetimi
-- Görevlerin çalışanlara atanması (`assignee`)
+- Görevlerin `users` tablosundaki çalışanlara atanması (`assigneeId`)
 - Durum, öncelik, atanan kişi ve başlık/açıklama metnine göre görev filtreleme
 - Her isteği konsola ve `logs/requests.log` dosyasına yazan **Logger middleware**
 - Merkezi hata yönetimi ve 404 middleware
@@ -100,10 +100,11 @@ Tarayıcıda `http://localhost:3000` adresine gidildiğinde şu yanıt görülme
 | --- | --- | --- |
 | `status` | Görev durumu: `pending`, `in-progress`, `completed` | `?status=in-progress` |
 | `priority` | Öncelik: `low`, `medium`, `high` | `?priority=high` |
-| `assignee` | Atanan kişinin adı | `?assignee=musa` |
+| `assigneeId` | Atanan kullanıcının `id` değeri | `?assigneeId=2` |
+| `assignee` | Atanan kullanıcının tam adı | `?assignee=Musa Yılmaz` |
 | `keyword` | Başlık veya açıklamada aranacak metin | `?keyword=backend` |
 
-Örnek: `GET /tasks?status=pending&priority=high&assignee=musa`
+Örnek: `GET /tasks?status=pending&priority=high&assigneeId=2`
 
 Filtrelenmiş yanıttaki `count`, eşleşen görev sayısını gösterir. Geçersiz veya bilinmeyen filtreler `400 Bad Request` ve açıklayıcı bir hata listesi döndürür.
 
@@ -116,7 +117,7 @@ Filtrelenmiş yanıttaki `count`, eşleşen görev sayısını gösterir. Geçer
   "title": "Login endpoint'ini yaz",
   "description": "Basit kullanıcı girişi",
   "priority": "high",
-  "assignee": "musa"
+  "assigneeId": 2
 }
 ```
 
@@ -131,7 +132,8 @@ Yanıt (`201 Created`):
     "description": "Basit kullanıcı girişi",
     "status": "pending",
     "priority": "high",
-    "assignee": "musa",
+    "assigneeId": 2,
+    "assignee": "Musa Yılmaz",
     "createdAt": "2026-10-19T17:35:31.513Z",
     "updatedAt": "2026-10-19T17:35:31.513Z"
   }

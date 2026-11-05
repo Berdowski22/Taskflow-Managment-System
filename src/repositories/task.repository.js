@@ -1,46 +1,55 @@
 const pool = require('../database/pool');
 
-const TASK_COLUMNS = `
-  id,
-  title,
-  description,
-  status,
-  priority,
-  assignee,
-  created_at AS "createdAt",
-  updated_at AS "updatedAt"
+// t: tasks (veya INSERT/UPDATE/DELETE ... RETURNING sonucu), u: atanan kullanıcı
+const TASK_SELECT = `
+  t.id,
+  t.title,
+  t.description,
+  t.status,
+  t.priority,
+  t.assignee_id AS "assigneeId",
+  u.full_name AS assignee,
+  t.created_at AS "createdAt",
+  t.updated_at AS "updatedAt"
 `;
 
-const findAll = async ({ status, priority, assignee, keyword }) => {
+const USER_JOIN = 'LEFT JOIN users u ON u.id = t.assignee_id';
+
+const findAll = async ({ status, priority, assignee, assigneeId, keyword }) => {
   const conditions = [];
   const values = [];
 
   if (status) {
     values.push(status);
-    conditions.push(`status = $${values.length}`);
+    conditions.push(`t.status = $${values.length}`);
   }
 
   if (priority) {
     values.push(priority);
-    conditions.push(`priority = $${values.length}`);
+    conditions.push(`t.priority = $${values.length}`);
+  }
+
+  if (assigneeId) {
+    values.push(assigneeId);
+    conditions.push(`t.assignee_id = $${values.length}`);
   }
 
   if (assignee) {
     values.push(assignee);
-    conditions.push(`LOWER(assignee) = LOWER($${values.length})`);
+    conditions.push(`LOWER(u.full_name) = LOWER($${values.length})`);
   }
 
   if (keyword) {
     values.push(keyword);
     conditions.push(
-      `(POSITION(LOWER($${values.length}) IN LOWER(title)) > 0
-        OR POSITION(LOWER($${values.length}) IN LOWER(description)) > 0)`
+      `(POSITION(LOWER($${values.length}) IN LOWER(t.title)) > 0
+        OR POSITION(LOWER($${values.length}) IN LOWER(t.description)) > 0)`
     );
   }
 
   const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
   const result = await pool.query(
-    `SELECT ${TASK_COLUMNS} FROM tasks ${whereClause} ORDER BY id`,
+    `SELECT ${TASK_SELECT} FROM tasks t ${USER_JOIN} ${whereClause} ORDER BY t.id`,
     values
   );
 
@@ -49,19 +58,22 @@ const findAll = async ({ status, priority, assignee, keyword }) => {
 
 const findById = async (id) => {
   const result = await pool.query(
-    `SELECT ${TASK_COLUMNS} FROM tasks WHERE id = $1`,
+    `SELECT ${TASK_SELECT} FROM tasks t ${USER_JOIN} WHERE t.id = $1`,
     [id]
   );
 
   return result.rows[0] || null;
 };
 
-const create = async ({ title, description, status, priority, assignee }) => {
+const create = async ({ title, description, status, priority, assigneeId }) => {
   const result = await pool.query(
-    `INSERT INTO tasks (title, description, status, priority, assignee)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING ${TASK_COLUMNS}`,
-    [title, description, status, priority, assignee]
+    `WITH t AS (
+       INSERT INTO tasks (title, description, status, priority, assignee_id)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *
+     )
+     SELECT ${TASK_SELECT} FROM t ${USER_JOIN}`,
+    [title, description, status, priority, assigneeId]
   );
 
   return result.rows[0];
@@ -73,7 +85,7 @@ const update = async (id, fields) => {
     description: 'description',
     status: 'status',
     priority: 'priority',
-    assignee: 'assignee',
+    assigneeId: 'assignee_id',
   };
   const values = [];
   const assignments = Object.entries(fields).map(([field, value]) => {
@@ -83,10 +95,13 @@ const update = async (id, fields) => {
 
   values.push(id);
   const result = await pool.query(
-    `UPDATE tasks
-     SET ${assignments.join(', ')}, updated_at = CURRENT_TIMESTAMP
-     WHERE id = $${values.length}
-     RETURNING ${TASK_COLUMNS}`,
+    `WITH t AS (
+       UPDATE tasks
+       SET ${assignments.join(', ')}, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $${values.length}
+       RETURNING *
+     )
+     SELECT ${TASK_SELECT} FROM t ${USER_JOIN}`,
     values
   );
 
@@ -95,7 +110,10 @@ const update = async (id, fields) => {
 
 const remove = async (id) => {
   const result = await pool.query(
-    `DELETE FROM tasks WHERE id = $1 RETURNING ${TASK_COLUMNS}`,
+    `WITH t AS (
+       DELETE FROM tasks WHERE id = $1 RETURNING *
+     )
+     SELECT ${TASK_SELECT} FROM t ${USER_JOIN}`,
     [id]
   );
 

@@ -7,11 +7,11 @@ const DEFAULTS = {
   description: '',
   status: 'pending',
   priority: 'medium',
-  assignee: null,
+  assigneeId: null,
 };
 
 // İstemcinin gönderebileceği alanlar (id, createdAt, updatedAt sistem tarafından yönetilir)
-const ALLOWED_FIELDS = ['title', 'description', 'status', 'priority', 'assignee'];
+const ALLOWED_FIELDS = ['title', 'description', 'status', 'priority', 'assigneeId'];
 
 /**
  * Gelen veriyi doğrular.
@@ -44,8 +44,12 @@ const validateTask = (data, { partial = false } = {}) => {
     errors.push(`priority must be one of: ${PRIORITIES.join(', ')}`);
   }
 
-  if (data.assignee !== undefined && data.assignee !== null && typeof data.assignee !== 'string') {
-    errors.push('assignee must be a string or null');
+  if (
+    data.assigneeId !== undefined &&
+    data.assigneeId !== null &&
+    (!Number.isInteger(data.assigneeId) || data.assigneeId <= 0)
+  ) {
+    errors.push('assigneeId must be a positive integer or null');
   }
 
   if (partial && !ALLOWED_FIELDS.some((field) => data[field] !== undefined)) {

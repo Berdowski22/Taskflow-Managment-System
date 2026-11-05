@@ -26,7 +26,8 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 | `description` | string | hayır | `""` | Görev açıklaması |
 | `status` | string | hayır | `"pending"` | `pending`, `in-progress`, `completed` |
 | `priority` | string | hayır | `"medium"` | `low`, `medium`, `high` |
-| `assignee` | string \| null | hayır | `null` | Görevin atandığı çalışan |
+| `assigneeId` | number \| null | hayır | `null` | Görevin atandığı kullanıcının `users.id` değeri (veritabanında `assignee_id`) |
+| `assignee` | string \| null | salt okunur | – | Atanan kullanıcının tam adı; `users` tablosundan gelir |
 | `createdAt` | ISO tarih | otomatik | oluşturma anı | Oluşturulma zamanı |
 | `updatedAt` | ISO tarih | otomatik | oluşturma anı | Son güncelleme zamanı |
 
@@ -41,7 +42,8 @@ Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoks
   "description": "Basit kullanıcı girişi",
   "status": "in-progress",
   "priority": "high",
-  "assignee": "musa",
+  "assigneeId": 2,
+  "assignee": "Musa Yılmaz",
   "createdAt": "2026-10-16T12:00:00.000Z",
   "updatedAt": "2026-10-16T12:30:00.000Z"
 }
@@ -66,7 +68,8 @@ Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoks
 | --- | --- |
 | `status` | `pending`, `in-progress` veya `completed` |
 | `priority` | `low`, `medium` veya `high` |
-| `assignee` | Atanan kişi adıyla tam eşleşme (büyük/küçük harf duyarsız) |
+| `assigneeId` | Atanan kullanıcının `id` değeri (pozitif tam sayı) |
+| `assignee` | Atanan kullanıcının tam adıyla eşleşme (büyük/küçük harf duyarsız) |
 | `keyword` | Başlık veya açıklama içinde kısmi arama (büyük/küçük harf duyarsız) |
 
 Örnek: `GET /tasks?status=in-progress&priority=high&keyword=backend`

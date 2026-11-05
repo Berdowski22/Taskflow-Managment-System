@@ -28,7 +28,7 @@ const parseId = (value) => {
 // 1. GET /tasks - Tüm görevleri listele
 const getAllTasks = async (req, res) => {
   const filters = req.query;
-  const allowedFilters = ['status', 'priority', 'assignee', 'keyword'];
+  const allowedFilters = ['status', 'priority', 'assignee', 'assigneeId', 'keyword'];
   const errors = Object.keys(filters)
     .filter((filter) => !allowedFilters.includes(filter))
     .map((filter) => `Unsupported filter: ${filter}`);
@@ -47,6 +47,10 @@ const getAllTasks = async (req, res) => {
     errors.push(`priority must be one of: ${PRIORITIES.join(', ')}`);
   }
 
+  if (filters.assigneeId && parseId(filters.assigneeId) === null) {
+    errors.push('assigneeId must be a positive integer');
+  }
+
   if (errors.length > 0) {
     return res.status(400).json({ success: false, message: 'Invalid filters', errors });
   }
@@ -55,6 +59,7 @@ const getAllTasks = async (req, res) => {
     status: filters.status,
     priority: filters.priority,
     assignee: filters.assignee?.trim(),
+    assigneeId: filters.assigneeId ? parseId(filters.assigneeId) : undefined,
     keyword: filters.keyword?.trim(),
   });
 
