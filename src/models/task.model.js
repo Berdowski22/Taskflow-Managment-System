@@ -1,4 +1,5 @@
 // Task veri modeli: izinli değerler ve varsayılanlar.
+const JOB_GROUPS = require('./job-groups');
 
 const STATUSES = ['pending', 'in-progress', 'completed'];
 const PRIORITIES = ['low', 'medium', 'high'];
@@ -27,8 +28,8 @@ const validateTask = (data, { partial = false } = {}) => {
   }
 
   if (!partial || data.title !== undefined) {
-    if (typeof data.title !== 'string' || data.title.trim() === '') {
-      errors.push('title is required and must be a non-empty string');
+    if (typeof data.title !== 'string' || !JOB_GROUPS.includes(data.title.trim())) {
+      errors.push(`title must be one of: ${JOB_GROUPS.join(', ')}`);
     }
   }
 

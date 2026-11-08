@@ -1,4 +1,6 @@
 const pool = require('../database/pool');
+const { withAssignmentTransaction } = require('../database/assignment-transaction');
+const taskRepository = require('./task.repository');
 
 // Aktif görevler (pending / in-progress) tasks tablosundan alt sorguyla hesaplanır
 const USER_SELECT = `
@@ -39,15 +41,26 @@ const getAllUsers = async () => {
 };
 
 const updateUser = async (id, { fullName, email, department }) => {
-    const result = await pool.query(
-        `UPDATE users SET
+    const updated = await withAssignmentTransaction(async (client) => {
+        const result = await client.query(
+            `UPDATE users SET
             full_name = COALESCE($1, full_name),
             email = COALESCE($2, email),
             department = COALESCE($3, department)
          WHERE id = $4 RETURNING id`,
-        [fullName ?? null, email ?? null, department ?? null, id]
-    );
-    return result.rows[0] ? getUserById(id) : null;
+            [fullName ?? null, email ?? null, department ?? null, id]
+        );
+        if (!result.rows[0]) return false;
+        if (department !== undefined) {
+            await client.query(
+                `UPDATE tasks SET assignee_id = NULL, updated_at = CURRENT_TIMESTAMP
+             WHERE assignee_id = $1 AND title IS DISTINCT FROM $2`,
+                [id, department]
+            );
+        }
+        return true;
+    });
+    return updated ? getUserById(id) : null;
 };
 
 // Kullanıcıya atanmış görevlerin assignee_id değeri ON DELETE SET NULL ile boşalır
@@ -59,4 +72,10 @@ const deleteUserId = async (id) => {
     return user;
 };
 
-module.exports = { createUser, getUserById, getAllUsers, updateUser, deleteUserId };
+
+const assignTaskToUser = async (taskId, userId) => {
+    const task = await taskRepository.update(taskId, { assigneeId: userId });
+    return task ? task.id : null;
+};
+
+module.exports = { createUser, getUserById, getAllUsers, updateUser, deleteUserId, assignTaskToUser };

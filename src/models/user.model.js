@@ -1,4 +1,5 @@
 // User veri modeli: izinli alanlar ve doğrulama.
+const JOB_GROUPS = require('./job-groups');
 
 const DEFAULTS = {};
 
@@ -34,8 +35,8 @@ const validateUser = (data, { partial = false } = {}) => {
   }
 
   if (!partial || data.department !== undefined) {
-    if (typeof data.department !== 'string' || data.department.trim() === '') {
-      errors.push('department is required and must be a non-empty string');
+    if (typeof data.department !== 'string' || !JOB_GROUPS.includes(data.department.trim())) {
+      errors.push(`department must be one of: ${JOB_GROUPS.join(', ')}`);
     }
   }
 

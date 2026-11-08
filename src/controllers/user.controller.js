@@ -92,6 +92,16 @@ const deleteUser = async (req, res) => {
 
   res.status(200).json({ success: true, message: `User with id ${id} deleted`, data: user });
 };
+const assignTaskToUser = async (req, res) => {
+  const taskId = parseId(req.params.taskId);
+  const userId = parseId(req.params.userId);
+  if (!taskId || !userId) return res.status(400).json({ success: false, message: 'Invalid taskId or userId' });
+
+  const assignedTaskId = await userRepository.assignTaskToUser(taskId, userId);
+  if (!assignedTaskId) return res.status(404).json({ success: false, message: `Task with id ${taskId} not found or could not be assigned` });
+
+  res.status(200).json({ success: true, message: `Task with id ${taskId} assigned to user with id ${userId}`, data: { taskId: assignedTaskId, userId } });
+};
 
 module.exports = {
   getAllUsers,
@@ -100,4 +110,5 @@ module.exports = {
   updateUser,
   patchUser,
   deleteUser,
+  assignTaskToUser,
 };

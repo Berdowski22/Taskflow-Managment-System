@@ -1,4 +1,5 @@
 const pool = require('../database/pool');
+const { withAssignmentTransaction, validateAssignment } = require('../database/assignment-transaction');
 
 // t: tasks (veya INSERT/UPDATE/DELETE ... RETURNING sonucu), u: atanan kullanıcı
 const TASK_SELECT = `
@@ -66,17 +67,20 @@ const findById = async (id) => {
 };
 
 const create = async ({ title, description, status, priority, assigneeId }) => {
-  const result = await pool.query(
-    `WITH t AS (
+  return withAssignmentTransaction(async (client) => {
+    await validateAssignment(client, title, assigneeId);
+    const result = await client.query(
+      `WITH t AS (
        INSERT INTO tasks (title, description, status, priority, assignee_id)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *
      )
      SELECT ${TASK_SELECT} FROM t ${USER_JOIN}`,
-    [title, description, status, priority, assigneeId]
-  );
+      [title, description, status, priority, assigneeId]
+    );
 
-  return result.rows[0];
+    return result.rows[0];
+  });
 };
 
 const update = async (id, fields) => {
@@ -94,18 +98,27 @@ const update = async (id, fields) => {
   });
 
   values.push(id);
-  const result = await pool.query(
-    `WITH t AS (
+  return withAssignmentTransaction(async (client) => {
+    const existing = await client.query('SELECT title, assignee_id FROM tasks WHERE id = $1', [id]);
+    if (!existing.rows[0]) return null;
+    const title = fields.title === undefined ? existing.rows[0].title : fields.title;
+    const assigneeId = fields.assigneeId === undefined ? existing.rows[0].assignee_id : fields.assigneeId;
+    if (fields.title !== undefined || fields.assigneeId !== undefined) {
+      await validateAssignment(client, title, assigneeId);
+    }
+    const result = await client.query(
+      `WITH t AS (
        UPDATE tasks
        SET ${assignments.join(', ')}, updated_at = CURRENT_TIMESTAMP
        WHERE id = $${values.length}
        RETURNING *
      )
      SELECT ${TASK_SELECT} FROM t ${USER_JOIN}`,
-    values
-  );
+      values
+    );
 
-  return result.rows[0] || null;
+    return result.rows[0] || null;
+  });
 };
 
 const remove = async (id) => {

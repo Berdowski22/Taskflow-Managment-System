@@ -22,10 +22,14 @@ const initializeDatabase = async () => {
         CHECK (status IN ('pending', 'in-progress', 'completed')),
       priority TEXT NOT NULL DEFAULT 'medium'
         CHECK (priority IN ('low', 'medium', 'high')),
-      assignee TEXT,
+      assignee_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+  `);
+  await pool.query(`
+    ALTER TABLE tasks
+      ADD COLUMN IF NOT EXISTS assignee_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
   `);
 };
 module.exports = initializeDatabase;

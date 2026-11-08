@@ -22,7 +22,7 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 | Alan | Tip | Zorunlu | Varsayılan | Açıklama |
 | --- | --- | --- | --- | --- |
 | `id` | number | otomatik | artan sayı | Benzersiz görev kimliği |
-| `title` | string | **evet** | – | Görev başlığı |
+| `title` | string | **evet** | – | Görevi alabilecek meslek grubu |
 | `description` | string | hayır | `""` | Görev açıklaması |
 | `status` | string | hayır | `"pending"` | `pending`, `in-progress`, `completed` |
 | `priority` | string | hayır | `"medium"` | `low`, `medium`, `high` |
@@ -33,12 +33,18 @@ Katmanlı yapı kullanılmıştır. Her katmanın tek bir sorumluluğu vardır:
 
 Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoksa oluşturulur. Bağlantı `DATABASE_URL` ortam değişkeninden alınır; görevler JSON dosyasından okunmaz veya içe aktarılmaz.
 
+`title` ve kullanıcının `department` alanı `Yazılım Sorumlusu`, `Yazılım Mühendisi`, `İnsan Kaynakları` değerlerinden biridir. Görev açıklaması `description` alanına yazılır. Atamada bu alanların eşleşmesi zorunludur; kullanıcı departmanı değiştiğinde uyumsuz görevler atanmamış duruma gelir. Eski kayıtlar otomatik dönüştürülmez.
+
+### Kullanıcı modeli
+
+`fullName`, `email` ve `department` kullanıcı oluştururken ve `PUT` isteğinde zorunludur. E-posta geçerli ve benzersiz olmalıdır; `PATCH` en az bir alan gerektirir. Yanıttaki `activeTaskCount` ve `activeTasks` sadece `pending` ve `in-progress` görevlerden hesaplanır. Kullanıcı silindiğinde görev atamalarının kaldırılması veritabanındaki `ON DELETE SET NULL` yabancı anahtarına bağlıdır.
+
 **Örnek:**
 
 ```json
 {
   "id": 1,
-  "title": "Login endpoint'ini yaz",
+  "title": "Yazılım Mühendisi",
   "description": "Basit kullanıcı girişi",
   "status": "in-progress",
   "priority": "high",
@@ -58,6 +64,13 @@ Veriler PostgreSQL'deki `tasks` tablosunda tutulur. Tablo sunucu başlarken yoks
 | 3 | `GET` | `/tasks/:id` | Görev detayını getirir | `200` | `404` |
 | 4 | `PATCH` | `/tasks/:id` | Gönderilen alanları günceller | `200` | `400`, `404` |
 | 5 | `DELETE` | `/tasks/:id` | Görevi siler | `200` | `404` |
+| 6 | `POST` | `/users/:taskId/assign/:userId` | Görevi uygun meslek grubundaki kullanıcıya atar | `200` | `400`, `404` |
+| 7 | `POST` | `/users` | Kullanıcı oluşturur | `201` | `400`, `409` |
+| 8 | `GET` | `/users` | Kullanıcıları ve aktif görevlerini listeler | `200` | – |
+| 9 | `GET` | `/users/:id` | Kullanıcı detayını getirir | `200` | `404` |
+| 10 | `PUT` | `/users/:id` | Kullanıcıyı tüm alanlarıyla günceller | `200` | `400`, `404`, `409` |
+| 11 | `PATCH` | `/users/:id` | Kullanıcının gönderilen alanlarını günceller | `200` | `400`, `404`, `409` |
+| 12 | `DELETE` | `/users/:id` | Kullanıcıyı siler | `200` | `404` |
 | – | `GET` | `/` | Sağlık kontrolü | `200` | – |
 
 ### Görev Listeleme Filtreleri
@@ -89,7 +102,7 @@ Filtre uygulanmadığında tüm görevler listelenir. Yanıttaki `count`, filtre
 { "success": false, "message": "Task with id 99 not found" }
 
 // Doğrulama hatası (400)
-{ "success": false, "message": "Validation failed", "errors": ["title is required and must be a non-empty string"] }
+{ "success": false, "message": "Validation failed", "errors": ["title must be one of: Yazılım Sorumlusu, Yazılım Mühendisi, İnsan Kaynakları"] }
 ```
 
 ## 5. HTTP Durum Kodları
@@ -101,6 +114,7 @@ Filtre uygulanmadığında tüm görevler listelenir. Yanıttaki `count`, filtre
 | `400` | Bad Request | `title` eksik veya geçersiz değer |
 | `400` | Bad Request | Listeleme filtresi geçersiz |
 | `404` | Not Found | Görev ya da route bulunamadı |
+| `409` | Conflict | E-posta zaten kullanılıyor |
 | `500` | Internal Server Error | Beklenmeyen sunucu hatası |
 
 ## 6. Logger

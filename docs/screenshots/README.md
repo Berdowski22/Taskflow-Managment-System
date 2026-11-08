@@ -1,5 +1,7 @@
 # TaskFlow API – Postman Test Ekran Görüntüleri
 
+> Aşağıdaki ekran görüntüleri PostgreSQL/kullanıcı değişikliklerinden önceki eski senaryolara aittir. Yeni testleri [Postman senaryo rehberine](./postman-senaryolari.md) göre sırasıyla uygulayın. Yeni görüntüler henüz eklenmedi; eski dosyalar korunmaktadır.
+
 Bu doküman, TaskFlow REST API'sinin Postman üzerinde gerçekleştirilen CRUD ve doğrulama (validation) testlerinin kanıtlarını içerir.
 
 ---
