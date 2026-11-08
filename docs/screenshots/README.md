@@ -1,96 +1,109 @@
 # TaskFlow API – Postman Test Ekran Görüntüleri
 
-> Aşağıdaki ekran görüntüleri PostgreSQL/kullanıcı değişikliklerinden önceki eski senaryolara aittir. Yeni testleri [Postman senaryo rehberine](./postman-senaryolari.md) göre sırasıyla uygulayın. Yeni görüntüler henüz eklenmedi; eski dosyalar korunmaktadır.
+Bu sayfa, Postman testlerinden alınan ekran görüntülerini gösterir. İstek gövdeleri, hazırlık ve beklenen sonuçlarla testleri yeniden uygulamak için [Postman senaryo rehberini](./postman-senaryolari.md) kullanın.
 
-Bu doküman, TaskFlow REST API'sinin Postman üzerinde gerçekleştirilen CRUD ve doğrulama (validation) testlerinin kanıtlarını içerir.
+Görüntülerdeki ID, ad ve departmanlar rehberdeki örneklerden farklı olabilir. Bazı adımlarda önceden mevcut kullanıcı ve görevler kullanılmıştır; bu nedenle her görüntünün aynı kayıt üzerinde art arda yapılan bir işlemi gösterdiği varsayılmamalıdır.
 
----
+## 1. Servis kontrolü
 
-## Test Senaryoları Özeti
+![Servis kontrolü](./01-health.png)
 
-| # | Senaryo | HTTP Method | Endpoint | Beklenen Durum | Dosya Adı |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Tüm Görevleri Listeleme | `GET` | `/tasks` | `200 OK` | `1-get-all-tasks.png` |
-| 2 | Yeni Görev Ekleme | `POST` | `/tasks` | `201 Created` | `2-Create-tasks.png` |
-| 3 | Ekleme Sonrası Liste Kontrolü | `GET` | `/tasks` | `200 OK` | `3-after-create-task-get-all-user.png` |
-| 4 | Eksik/Hatalı Body ile Ekleme (Doğrulama Testi) | `POST` | `/tasks` | `400 Bad Request` | `4-create-task-without-body.png` |
-| 5 | ID ile Tekil Görev Detayı | `GET` | `/tasks/:id` | `200 OK` | `5-get-task-by-id.png` |
-| 6 | Görev Güncelleme | `PATCH` | `/tasks/:id` | `200 OK` | `6-update-task.png` |
-| 7 | Görev Silme (Adım 1) | `DELETE` | `/tasks/:id` | `200 OK` | `7-delete-task1.png` |
-| 8 | Görev Silme (Adım 2 / Tekrar Silme) | `DELETE` | `/tasks/:id` | `200 OK / 404` | `7-delete-task2.png` |
-| 9 | Silme Sonrası Liste Kontrolü | `GET` | `/tasks` | `200 OK` | `8-after-delete-task-get-all-user.png` |
-| 10 | Durum ve Önceliğe Göre Filtreleme | `GET` | `/tasks?status=pending&priority=high` | `200 OK` | `9-filter-by-the-status-and-priorty-v1.png` |
-| 11 | Durum ve Önceliğe Göre Filtreleme | `GET` | `/tasks?status=pending&priority=high` | `200 OK` | `9-filter-by-the-status-and-priorty-v2.png` |
+## 2. Kullanıcıları listeleme
 
----
+![Kullanıcıları listeleme](./02-list-users.png)
 
-## 1. Tüm Görevleri Listeleme (`GET /tasks`)
+## 3. Kullanıcı oluşturma
 
-Mevcut görevlerin listelenmesi:
-![Tüm Görevleri Listeleme](./1-get-all-tasks.png)
+![Kullanıcı oluşturma](./03-create-user.png)
 
----
+## 4. Kullanıcı detayı
 
-## 2. Yeni Görev Ekleme (`POST /tasks`)
+![Kullanıcı detayı](./06-get-user.png)
 
-Başarılı yeni görev oluşturma:
-![Yeni Görev Ekleme](./2-Create-tasks.png)
+## 5. Bulunamayan kullanıcı
 
----
+![Bulunamayan kullanıcı](./07-user-not-found.png)
 
-## 3. Görev Eklendikten Sonra Listeleme (`GET /tasks`)
+## 6. Zorunlu alan doğrulaması
 
-Yeni eklenen görevin listede yer aldığının doğrulanması:
-![Ekleme Sonrası Liste](./3-after-create-task-get-all-user.png)
+![Zorunlu alan doğrulaması](./08-user-required.png)
 
----
+## 7. Geçersiz kullanıcı alanları
 
-## 4. Eksik Body ile Görev Ekleme Hatası (`POST /tasks`)
+![Geçersiz kullanıcı alanları](./09-user-invalid-fields.png)
 
-`title` alanı gönderilmediğinde dönen 400 Bad Request doğrulama hatası:
-![Eksik Body Hatası](./4-create-task-without-body.png)
+## 8. Tekrarlanan e-posta
 
----
+![Tekrarlanan e-posta](./10-user-duplicate-email.png)
 
-## 5. ID ile Görev Detayı Getirme (`GET /tasks/:id`)
+## 9. Kullanıcı güncelleme
 
-Belirli bir görevin detayının görüntülenmesi:
-![Görev Detayı](./5-get-task-by-id.png)
+![Kullanıcı güncelleme](./11-update-user-put.png)
 
----
+## 10. Kullanıcıyı kısmi güncelleme
 
-## 6. Görev Güncelleme (`PATCH /tasks/:id`)
+![Kullanıcıyı kısmi güncelleme](./12-update-user-patch.png)
 
-Görevin alanlarının güncellenmesi:
-![Görev Güncelleme](./6-update-task.png)
+## 11. Görevleri listeleme
 
----
+![Görevleri listeleme](./13-list-tasks.png)
 
-## 7. Görev Silme (`DELETE /tasks/:id`)
+## 12. Görev oluşturma
 
-Görevin başarıyla silinmesi:
-![Görev Silme 1](./7-delete-task1.png)
+![Görev oluşturma](./14-create-task.png)
 
-Silme işleminin detay/tekrar kontrolü:
-![Görev Silme 2](./7-delete-task2.png)
+## 13. Geçersiz görev alanları
 
----
+![Geçersiz görev alanları](./15-task-invalid-fields.png)
 
-## 8. Silme Sonrası Liste Kontrolü (`GET /tasks`)
+## 14. Görev detayı
 
-Silinen görevin listeden kaldırıldığının doğrulanması:
-![Silme Sonrası Liste](./8-after-delete-task-get-all-user.png)
+![Görev detayı](./16-get-task.png)
 
----
+## 15. Uyuşmayan meslek grubuna atama
 
-## 9. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=pending&priority=high`)
+![Uyumsuz görev ataması](./17-assign-group-mismatch.png)
 
-`status=pending` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
-![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty-v1.png)
+## 16. Görev atama
 
----
+![Görev atama](./18-assign-task.png)
 
-## 10. Durum ve Önceliğe Göre Filtreleme (`GET /tasks?status=in-progress&priority=high`)
+## 17. Kullanıcının aktif görevleri
 
-`status=in-progress` ve `priority=high` koşullarına uyan görevlerin listelenmesi:
-![Durum ve önceliğe göre filtreleme](./9-filter-by-the-status-and-priorty-v2.png)
+![Kullanıcının aktif görevleri](./19-user-active-tasks.png)
+
+## 18. Görev güncelleme
+
+![Görev güncelleme](./20-update-task.png)
+
+## 19. Görevi tamamlama
+
+![Görevi tamamlama](./21-complete-task.png)
+
+## 20. Tamamlanmış görevin aktif listeden çıkarılması
+
+![Tamamlanan görev sonrası aktif görevler](./22-completed-task-not-active.png)
+
+## 21. Görevleri filtreleme
+
+![Görevleri filtreleme](./23-filter-tasks.png)
+
+## 22. Geçersiz durum filtresi
+
+![Geçersiz durum filtresi](./24-invalid-status-filter.png)
+
+## 23. Görev silme
+
+![Görev silme](./25-delete-task.png)
+
+## 24. Silinmiş görevi sorgulama
+
+![Silinmiş görevi sorgulama](./26-deleted-task-not-found.png)
+
+## 25. Silme testi için kullanıcı oluşturma
+
+![Silme testi için kullanıcı oluşturma](./27-create-user-for-deletion.png)
+
+## 26. Kullanıcı silme
+
+![Kullanıcı silme](./28-delete-user.png)
